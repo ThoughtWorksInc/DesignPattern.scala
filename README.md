@@ -1,6 +1,6 @@
 # Type Classes are Plain Old Factory Design Patterns
 
-Type class, the polymorphic type system construct in Haskell, is not natively avaible in Java and most of other object-oriented languages.
+Type class, the polymorphic type system in Haskell, is not natively avaible in Java and most of other object-oriented languages.
 
 Some Scala libraries mimic type classes via implicit parameters. This approach is able to represent higher kinded type class like `Monad`, multi-parameter type classes like `MonadError`, and dependent type classes like operations on heterogenous lists.
 
