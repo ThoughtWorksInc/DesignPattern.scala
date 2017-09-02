@@ -1,1 +1,1 @@
-# Type Classes are Plain Old Factory Patterns
+# Type Classes are Plain Old Factory Design Patterns
