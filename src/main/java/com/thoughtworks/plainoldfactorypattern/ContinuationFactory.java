@@ -1,13 +1,18 @@
 package com.thoughtworks.plainoldfactorypattern;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author 杨博 (Yang Bo)
  */
-public class ContinuationFactory<R> extends AbstractMonadFactory {
+public class ContinuationFactory<R> implements MonadFactory {
 
-    abstract class Continuation<A> extends AbstractMonad<A> {
+    abstract class Continuation<A> implements Monad<A> {
+        @Override
+        public ContinuationFactory<R> getFactory() {
+            return ContinuationFactory.this;
+        }
 
         public abstract R listen(Function<A, R> handler);
 
@@ -36,5 +41,14 @@ public class ContinuationFactory<R> extends AbstractMonadFactory {
         return shift(handler -> handler.apply(a));
     }
 
-    static final ContinuationFactory<Void> VOID_CONTINUATION_FACTORY = new ContinuationFactory<Void>();
+    public <A> Continuation<A> delay(Supplier<A> run) {
+        return shift(handler -> handler.apply(run.get()));
+    }
+
+
+    public static ContinuationFactory<Void> getVoidContinuationFactory() {
+        return VOID_CONTINUATION_FACTORY;
+    }
+
+    public static final ContinuationFactory<Void> VOID_CONTINUATION_FACTORY = new ContinuationFactory<Void>();
 }

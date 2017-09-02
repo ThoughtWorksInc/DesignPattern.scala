@@ -6,7 +6,11 @@ import java.util.function.Function;
 /**
  * @author 杨博 (Yang Bo)
  */
-public class OptionalTFactory extends AbstractMonadFactory {
+public class OptionalTFactory implements MonadFactory {
+    public OptionalTFactory(MonadFactory underlyingFactory) {
+        this.underlyingFactory = underlyingFactory;
+    }
+
     private MonadFactory underlyingFactory;
 
     @Override
@@ -14,7 +18,11 @@ public class OptionalTFactory extends AbstractMonadFactory {
         return new OptionalT<A>(underlyingFactory.newInstance(Optional.of(a)));
     }
 
-    public class OptionalT<A> extends AbstractMonad<A> {
+    public <A> OptionalT<A> lift(Monad<Optional<A>> underlyingMonad) {
+        return new OptionalT(underlyingMonad);
+    }
+
+    public class OptionalT<A> implements Monad<A> {
 
         public OptionalT(Monad<Optional<A>> underlyingMonad) {
             this.underlyingMonad = underlyingMonad;
@@ -27,17 +35,29 @@ public class OptionalTFactory extends AbstractMonadFactory {
         }
 
         @Override
+        public OptionalTFactory getFactory() {
+            return OptionalTFactory.this;
+        }
+
+        @Override
         public <B> OptionalT<B> flatMap(final Function<A, Monad<B>> mapper) {
-            return new OptionalT<B>(underlyingMonad.flatMap(optional -> {
-                        if (optional.isPresent()) {
-                            OptionalT<B> optionalB = (OptionalT<B>) mapper.apply(optional.get());
-                            return optionalB.underlyingMonad;
-                        } else {
-                            return underlyingFactory.newInstance(Optional.empty());
-                        }
-                    }
-            ));
+            Monad<Optional<B>> optionalMonadB = underlyingMonad.flatMap(optional -> {
+                if (optional.isPresent()) {
+                    OptionalT<B> optionalB = (OptionalT<B>) mapper.apply(optional.get());
+                    return optionalB.underlyingMonad;
+                } else {
+                    return underlyingFactory.newInstance(Optional.empty());
+                }
+            });
+            return new OptionalT<B>(optionalMonadB);
 
         }
     }
+
+    public static OptionalTFactory getTaskFactory() {
+        return TASK_FACTORY;
+    }
+
+    public static final OptionalTFactory TASK_FACTORY = new OptionalTFactory(ContinuationFactory.getVoidContinuationFactory());
+
 }
