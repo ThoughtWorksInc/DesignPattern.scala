@@ -16,7 +16,7 @@ public class ContinuationFactory<R> extends AbstractMonadFactory {
             return shift(handler ->
                     listen(a -> {
                         Continuation<B> continuationB = (Continuation<B>) mapper.apply(a);
-                        return continuationB.listen(b -> handler.apply(b));
+                        return continuationB.listen(handler);
                     }));
         }
     }
