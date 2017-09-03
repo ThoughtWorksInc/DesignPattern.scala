@@ -12,7 +12,7 @@ trait MonadFactory extends FunctorFactory {
 
     def map[B](mapper: (A) => B): Facade[B] = {
       flatMap { a =>
-        apply(mapper(a))
+        pure(mapper(a))
       }
     }
 
@@ -20,6 +20,6 @@ trait MonadFactory extends FunctorFactory {
 
   }
 
-  def apply[A](a: A): Facade[A]
+  def pure[A](a: A): Facade[A]
 
 }

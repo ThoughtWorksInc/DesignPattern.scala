@@ -2,7 +2,7 @@ package com.thoughtworks.plainoldscalafactorydesignpattern
 import com.thoughtworks.plainoldscalafactorydesignpattern.continuation.UnitContinuation
 
 import language.higherKinds
-import com.thoughtworks.plainoldscalafactorydesignpattern.{LiftIOFactory => Base, MonadErrorFactory => BaseMonadErrors}
+import com.thoughtworks.plainoldscalafactorydesignpattern.{IOFactory => Base, MonadErrorFactory => BaseMonadErrors}
 
 /**
   * @author 杨博 (Yang Bo)
@@ -32,7 +32,7 @@ object either {
             case Left(e) =>
               underlying.Facade(catcher(e).unbox)
             case right: Right[Error, B] =>
-              underlying(right)
+              underlying.pure(right)
           }
           .unbox
       }
@@ -44,27 +44,27 @@ object either {
             case Right(a) =>
               underlying.Facade(mapper(a).unbox)
             case Left(e) =>
-              underlying(Left(e))
+              underlying.pure(Left(e))
           }
           .unbox
       }
     }
 
-    def raiseError[A](e: Error): Facade[A] = Facade(underlying(Left(e)).unbox)
+    def raiseError[A](e: Error): Facade[A] = Facade(underlying.pure(Left(e)).unbox)
 
-    def apply[A](a: A): Facade[A] = Facade(underlying(Right(a)).unbox)
+    def pure[A](a: A): Facade[A] = Facade(underlying.pure(Right(a)).unbox)
 
   }
 
-  trait LiftIODecoratorFactory extends LiftIOFactory with BoxDecoratorFactory {
+  trait IODecoratorFactory extends IOFactory with BoxDecoratorFactory {
 
-    type Underlying <: LiftIOFactory with BoxFactory
+    type Underlying <: IOFactory with BoxFactory
 
     def liftIO[A](io: () => A): Facade[A] = Facade(underlying.liftIO(() => Right(io())).unbox)
 
   }
 
-  object Task extends MonadErrorDecoratorFactory with LiftIODecoratorFactory {
+  object Task extends MonadErrorDecoratorFactory with IODecoratorFactory with BoxCompanion {
     type Error = Throwable
     type Underlying = continuation.UnitContinuation.type
     val underlying: Underlying = UnitContinuation

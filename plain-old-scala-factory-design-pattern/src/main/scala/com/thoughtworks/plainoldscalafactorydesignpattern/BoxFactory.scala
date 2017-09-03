@@ -11,9 +11,7 @@ trait BoxFactory {
   type Unboxed[+A]
 
   trait Box[+A] extends Any {
-
     def unbox: Unboxed[A]
-
   }
 
   type Facade[+A] <: Box[A]

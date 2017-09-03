@@ -9,7 +9,7 @@ object continuation {
   /**
     * @author 杨博 (Yang Bo)
     */
-  trait ContinuationFactory extends MonadFactory with BoxFactory with LiftIOFactory {
+  trait ContinuationFactory extends MonadFactory with BoxFactory with IOFactory {
     type Result
     type Unboxed[+A] = (A => Result) => Result
 
@@ -23,12 +23,12 @@ object continuation {
       }
     }
 
-    def apply[A](a: A): Facade[A] = Facade(_(a))
+    def pure[A](a: A): Facade[A] = Facade(_(a))
 
-    def liftIO[A](io: IO[A]): Facade[A] = Facade(_(io()))
+    def liftIO[A](io: () => A): Facade[A] = Facade(_(io()))
   }
 
-  object UnitContinuation extends ContinuationFactory {
+  object UnitContinuation extends ContinuationFactory with BoxCompanion {
     type Result = Unit
     implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with Continuation[A]
   }
