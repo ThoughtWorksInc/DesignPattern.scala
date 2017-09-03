@@ -32,6 +32,8 @@ object continuation {
     type Result = Unit
     implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with Continuation[A]
   }
+
+  /** @template */
   type UnitContinuation[+A] = UnitContinuation.Facade[A]
 
 }

@@ -70,5 +70,7 @@ object either {
     val underlying: Underlying = UnitContinuation
     implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with MonadErrorDecorator[A]
   }
+
+  /** @template */
   type Task[+A] = Task.Facade[A]
 }
