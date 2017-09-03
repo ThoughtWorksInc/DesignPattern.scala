@@ -9,16 +9,16 @@ import com.thoughtworks.plainoldscalafactorydesignpattern.{IOFactory => Base, Mo
   */
 object either {
 
-  trait BoxDecoratorFactory extends BoxFactory {
-    type Underlying <: BoxFactory
-    val underlying: Underlying
+  trait BoxFactoryDecorator extends BoxFactory {
+    type UnderlyingFactory <: BoxFactory
+    val underlyingFactory: UnderlyingFactory
 
     type Error
-    type Unboxed[+A] = underlying.Unboxed[Either[Error, A]]
+    type Unboxed[+A] = underlyingFactory.Unboxed[Either[Error, A]]
   }
 
-  trait MonadErrorDecoratorFactory extends BaseMonadErrors with BoxDecoratorFactory {
-    type Underlying <: MonadFactory with BoxFactory {
+  trait MonadErrorFactoryDecorator extends BaseMonadErrors with BoxFactoryDecorator {
+    type UnderlyingFactory <: MonadFactory with BoxFactory {
       type Facade[+A] <: Monad[A] with Box[A]
     }
 
@@ -26,48 +26,48 @@ object either {
 
     trait MonadErrorDecorator[+A] extends Any with MonadError[A] with Box[A] {
       def handleError[B >: A](catcher: Error => Facade[B]): Facade[B] = Facade {
-        underlying
+        underlyingFactory
           .Facade(unbox)
           .flatMap {
             case Left(e) =>
-              underlying.Facade(catcher(e).unbox)
+              underlyingFactory.Facade(catcher(e).unbox)
             case right: Right[Error, B] =>
-              underlying.pure(right)
+              underlyingFactory.pure(right)
           }
           .unbox
       }
 
       def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = Facade {
-        underlying
+        underlyingFactory
           .Facade(unbox)
           .flatMap {
             case Right(a) =>
-              underlying.Facade(mapper(a).unbox)
+              underlyingFactory.Facade(mapper(a).unbox)
             case Left(e) =>
-              underlying.pure(Left(e))
+              underlyingFactory.pure(Left(e))
           }
           .unbox
       }
     }
 
-    def raiseError[A](e: Error): Facade[A] = Facade(underlying.pure(Left(e)).unbox)
+    def raiseError[A](e: Error): Facade[A] = Facade(underlyingFactory.pure(Left(e)).unbox)
 
-    def pure[A](a: A): Facade[A] = Facade(underlying.pure(Right(a)).unbox)
-
-  }
-
-  trait IODecoratorFactory extends IOFactory with BoxDecoratorFactory {
-
-    type Underlying <: IOFactory with BoxFactory
-
-    def liftIO[A](io: () => A): Facade[A] = Facade(underlying.liftIO(() => Right(io())).unbox)
+    def pure[A](a: A): Facade[A] = Facade(underlyingFactory.pure(Right(a)).unbox)
 
   }
 
-  object Task extends MonadErrorDecoratorFactory with IODecoratorFactory with BoxCompanion {
+  trait IOFactoryDecorator extends IOFactory with BoxFactoryDecorator {
+
+    type UnderlyingFactory <: IOFactory with BoxFactory
+
+    def liftIO[A](io: () => A): Facade[A] = Facade(underlyingFactory.liftIO(() => Right(io())).unbox)
+
+  }
+
+  object Task extends MonadErrorFactoryDecorator with IOFactoryDecorator with BoxCompanion {
     type Error = Throwable
-    type Underlying = continuation.UnitContinuation.type
-    val underlying: Underlying = UnitContinuation
+    type UnderlyingFactory = continuation.UnitContinuation.type
+    val underlyingFactory: UnderlyingFactory = UnitContinuation
     implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with MonadErrorDecorator[A]
   }
 

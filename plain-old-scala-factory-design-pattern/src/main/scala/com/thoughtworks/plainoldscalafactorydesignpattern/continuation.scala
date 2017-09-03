@@ -6,9 +6,6 @@ import language.higherKinds
   */
 object continuation {
 
-  /**
-    * @author 杨博 (Yang Bo)
-    */
   trait ContinuationFactory extends MonadFactory with BoxFactory with IOFactory {
     type Result
     type Unboxed[+A] = (A => Result) => Result
