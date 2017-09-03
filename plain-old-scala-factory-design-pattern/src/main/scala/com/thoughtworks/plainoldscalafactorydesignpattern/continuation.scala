@@ -1,5 +1,8 @@
 package com.thoughtworks.plainoldscalafactorydesignpattern
+import com.thoughtworks.plainoldscalafactorydesignpattern.covariant._
+
 import language.higherKinds
+import language.implicitConversions
 
 /**
   * @author 杨博 (Yang Bo)

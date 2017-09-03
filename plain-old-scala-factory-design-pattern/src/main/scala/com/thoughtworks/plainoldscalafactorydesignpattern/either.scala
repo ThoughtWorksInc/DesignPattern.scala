@@ -1,8 +1,8 @@
 package com.thoughtworks.plainoldscalafactorydesignpattern
 import com.thoughtworks.plainoldscalafactorydesignpattern.continuation.UnitContinuation
+import com.thoughtworks.plainoldscalafactorydesignpattern.covariant._
 
 import language.higherKinds
-import com.thoughtworks.plainoldscalafactorydesignpattern.{IOFactory => Base, MonadErrorFactory => BaseMonadErrors}
 
 /**
   * @author 杨博 (Yang Bo)
@@ -17,7 +17,7 @@ object either {
     type Unboxed[+A] = underlyingFactory.Unboxed[Either[Error, A]]
   }
 
-  trait MonadErrorFactoryDecorator extends BaseMonadErrors with BoxFactoryDecorator {
+  trait MonadErrorFactoryDecorator extends MonadErrorFactory with BoxFactoryDecorator {
     type UnderlyingFactory <: MonadFactory with BoxFactory {
       type Facade[+A] <: Monad[A] with Box[A]
     }
