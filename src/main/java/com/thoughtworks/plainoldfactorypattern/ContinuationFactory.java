@@ -50,5 +50,5 @@ public class ContinuationFactory<R> implements MonadFactory {
         return VOID_CONTINUATION_FACTORY;
     }
 
-    public static final ContinuationFactory<Void> VOID_CONTINUATION_FACTORY = new ContinuationFactory<Void>();
+    private static final ContinuationFactory<Void> VOID_CONTINUATION_FACTORY = new ContinuationFactory<Void>();
 }

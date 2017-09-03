@@ -58,6 +58,6 @@ public class OptionalTFactory implements MonadFactory {
         return TASK_FACTORY;
     }
 
-    public static final OptionalTFactory TASK_FACTORY = new OptionalTFactory(ContinuationFactory.getVoidContinuationFactory());
+    private static final OptionalTFactory TASK_FACTORY = new OptionalTFactory(ContinuationFactory.getVoidContinuationFactory());
 
 }
