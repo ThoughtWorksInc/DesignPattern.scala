@@ -4,7 +4,7 @@ package com.thoughtworks.plainoldjavafactorydesignpattern;
 import java.util.function.Function;
 
 /**
- * @author 杨博 (Yang Bo)
+ * @author Yang Bo
  */
 public interface MonadFactory {
 

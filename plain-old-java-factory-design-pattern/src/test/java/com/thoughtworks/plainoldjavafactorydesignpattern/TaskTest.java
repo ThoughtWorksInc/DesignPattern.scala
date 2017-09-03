@@ -16,7 +16,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * @author 杨博 (Yang Bo)
+ * @author Yang Bo
  */
 public class TaskTest {
 

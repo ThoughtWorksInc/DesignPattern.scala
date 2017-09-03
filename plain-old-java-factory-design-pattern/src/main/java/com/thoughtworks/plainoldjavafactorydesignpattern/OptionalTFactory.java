@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * @author 杨博 (Yang Bo)
+ * @author Yang Bo
  */
 public class OptionalTFactory implements MonadFactory {
     public OptionalTFactory(MonadFactory underlyingFactory) {
