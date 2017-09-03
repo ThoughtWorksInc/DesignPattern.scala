@@ -1,4 +1,4 @@
-package com.thoughtworks.plainoldfactorypattern;
+package com.thoughtworks.plainoldjavafactorydesignpattern;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,7 +1,3 @@
-crossPaths := false
+lazy val `plain-old-java-factory-design-pattern` = project
 
-autoScalaLibrary := false
-
-libraryDependencies += "junit" % "junit" % "4.11" % Test
-
-libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test
+lazy val `plain-old-scala-factory-design-pattern` = project

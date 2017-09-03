@@ -1,4 +1,4 @@
-package com.thoughtworks.plainoldfactorypattern;
+package com.thoughtworks.plainoldjavafactorydesignpattern;
 
 import java.util.Optional;
 import java.util.function.Function;
