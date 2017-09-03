@@ -4,10 +4,12 @@ import language.higherKinds
 /**
   * @author 杨博 (Yang Bo)
   */
-trait LiftIOs {
+trait LiftIOFactory {
 
   type Facade[A]
 
-  def liftIO[A](io: () => A): Facade[A]
+  type IO[+A] = () => A
+
+  def liftIO[A](io: IO[A]): Facade[A]
 
 }

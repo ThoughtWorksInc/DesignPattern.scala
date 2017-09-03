@@ -4,11 +4,11 @@ import language.higherKinds
 /**
   * @author 杨博 (Yang Bo)
   */
-trait Monads extends Functors {
+trait MonadFactory extends FunctorFactory {
 
-  type Facade[+A]   <: Monad[A]
+  type Facade[+A] <: Monad[A]
 
-  trait Monad[+A] extends Functor[A] {
+  trait Monad[+A] extends Any with Functor[A] {
 
     def map[B](mapper: (A) => B): Facade[B] = {
       flatMap { a =>

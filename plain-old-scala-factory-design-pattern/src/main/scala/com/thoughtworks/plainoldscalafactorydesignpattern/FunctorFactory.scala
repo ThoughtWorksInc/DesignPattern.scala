@@ -5,11 +5,11 @@ import language.implicitConversions
 /**
   * @author 杨博 (Yang Bo)
   */
-trait Functors {
+trait FunctorFactory {
 
-  type Facade[+A]  <: Functor[A]
+  type Facade[+A] <: Functor[A]
 
-  trait Functor[+A] {
+  trait Functor[+A] extends Any {
 
     def map[B](mapper: A => B): Facade[B]
 
