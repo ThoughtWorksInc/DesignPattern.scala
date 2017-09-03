@@ -34,23 +34,21 @@ public class TaskTest {
 
 
     <A> OptionalTFactory.OptionalT<A> nio(BiConsumer<Function<Optional<A>, Void>, CompletionHandler<A, Function<Optional<A>, Void>>> start) {
-        return asyncTask(handler ->
-                {
-                    start.accept(handler, new CompletionHandler<A, Function<Optional<A>, Void>>() {
-                        @Override
-                        public void completed(A result, Function<Optional<A>, Void> attachment) {
-                            attachment.apply(Optional.<A>of(result));
-                        }
-
-                        @Override
-                        public void failed(Throwable exc, Function<Optional<A>, Void> attachment) {
-                            exc.printStackTrace();
-                            attachment.apply(Optional.empty());
-                        }
-                    });
-                    return null;
+        return asyncTask(handler -> {
+            start.accept(handler, new CompletionHandler<A, Function<Optional<A>, Void>>() {
+                @Override
+                public void completed(A result, Function<Optional<A>, Void> attachment) {
+                    attachment.apply(Optional.<A>of(result));
                 }
-        );
+
+                @Override
+                public void failed(Throwable exc, Function<Optional<A>, Void> attachment) {
+                    exc.printStackTrace();
+                    attachment.apply(Optional.empty());
+                }
+            });
+            return null;
+        });
     }
 
     OptionalTFactory.OptionalT<Integer> asyncWrite(AsynchronousFileChannel channel, ByteBuffer data, long offset) {
