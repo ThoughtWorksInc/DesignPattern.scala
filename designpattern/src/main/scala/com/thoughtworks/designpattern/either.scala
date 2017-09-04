@@ -1,5 +1,4 @@
 package com.thoughtworks.designpattern
-import com.thoughtworks.designpattern.continuation.UnitContinuation
 import com.thoughtworks.designpattern.covariant._
 
 import language.higherKinds

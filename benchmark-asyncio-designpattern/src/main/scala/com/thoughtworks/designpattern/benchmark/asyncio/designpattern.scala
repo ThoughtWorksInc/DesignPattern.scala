@@ -1,13 +1,11 @@
-package com.thoughtworks.designpattern.benchmark
+package com.thoughtworks.designpattern.benchmark.asyncio
 
-import com.thoughtworks.designpattern.continuation.UnitContinuation
-import com.thoughtworks.designpattern.covariant.BoxCompanion
-import com.thoughtworks.designpattern.either._
+import com.thoughtworks.designpattern._, continuation._, covariant._, either._
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-object designpatternasyncio {
+object designpattern {
 
   object AsyncIO extends EitherMonadErrorFactoryDecorator with EitherIOFactoryDecorator with BoxCompanion {
     type UnderlyingFactory = UnitContinuation.type

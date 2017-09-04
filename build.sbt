@@ -1,13 +1,16 @@
-lazy val `benchmark-scalazasyncio` = project
+lazy val `benchmark-compiletime-scalaz` = project.dependsOn(`benchmark-asyncio-scalaz`)
 
-lazy val `benchmark-Main` = project.dependsOn(`benchmark-scalazasyncio`, `benchmark-designpatternasyncio`, lite)
+lazy val `benchmark-compiletime-designpattern` = project.dependsOn(`benchmark-asyncio-designpattern`)
 
-lazy val `benchmark-designpatternasyncio` = project.dependsOn(designpattern)
+lazy val `benchmark-asyncio-scalaz` = project
+
+lazy val `benchmark-Main` = project.dependsOn(`benchmark-asyncio-scalaz`, `benchmark-asyncio-designpattern`, lite)
+
+lazy val `benchmark-asyncio-designpattern` = project.dependsOn(designpattern)
 
 lazy val designpattern = project
 
 lazy val lite = project
-
 
 lazy val unidoc = project
   .enablePlugins(StandaloneUnidoc, TravisUnidocTitle)

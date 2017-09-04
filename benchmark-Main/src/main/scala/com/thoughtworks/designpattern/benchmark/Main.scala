@@ -14,7 +14,7 @@ class Main {
 
   @Benchmark
   def sequenceScalazAsyncIOS(): Long = {
-    import com.thoughtworks.designpattern.benchmark.scalazasyncio.AsyncIO
+    import com.thoughtworks.designpattern.benchmark.asyncio.scalaz.AsyncIO
 
     import scalaz.syntax.all._
 
@@ -28,7 +28,7 @@ class Main {
 
   @Benchmark
   def sequenceDesignPatternAsyncIOS(): Long = {
-    import com.thoughtworks.designpattern.benchmark.designpatternasyncio.AsyncIO
+    import com.thoughtworks.designpattern.benchmark.asyncio.designpattern.AsyncIO
 
     val tasks = (0 until 100).map(_ => AsyncIO.liftIO(() => 1)).toList
     val init = AsyncIO.liftIO(() => ListBuffer.empty[Int])
@@ -40,7 +40,7 @@ class Main {
 
   @Benchmark
   def sequenceScalazAsyncIOA(): Long = {
-    import com.thoughtworks.designpattern.benchmark.scalazasyncio.AsyncIO
+    import com.thoughtworks.designpattern.benchmark.asyncio.scalaz.AsyncIO
 
     import scala.concurrent.ExecutionContext.Implicits._
     import scalaz.syntax.all._
@@ -55,7 +55,7 @@ class Main {
 
   @Benchmark
   def sequenceDesignPatternAsyncIOA(): Long = {
-    import com.thoughtworks.designpattern.benchmark.designpatternasyncio.AsyncIO
+    import com.thoughtworks.designpattern.benchmark.asyncio.designpattern.AsyncIO
 
     import scala.concurrent.ExecutionContext.Implicits._
 

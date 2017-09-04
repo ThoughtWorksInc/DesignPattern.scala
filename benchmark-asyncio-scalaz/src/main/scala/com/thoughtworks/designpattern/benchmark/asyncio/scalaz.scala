@@ -1,16 +1,15 @@
-package com.thoughtworks.designpattern.benchmark
+package com.thoughtworks.designpattern.benchmark.asyncio
 
 import scala.concurrent.{ExecutionContext, SyncVar}
-import scalaz._
-import scalaz.effect._
+import _root_.scalaz._, Id._, effect._
 
-object scalazasyncio {
+object scalaz {
 
   object AsyncIO {
     implicit object asyncIOInstances
         extends IsomorphismMonadError[AsyncIO, EitherT[Cont[Unit, ?], Throwable, ?], Throwable]
         with MonadIO[AsyncIO] {
-      val G = EitherT.eitherTMonadError[Cont[Unit, ?], Throwable](Cont.ContsTMonad[scalaz.Id.Id, scalaz.Id.Id, Unit])
+      val G = EitherT.eitherTMonadError[Cont[Unit, ?], Throwable](Cont.ContsTMonad[Id, Id, Unit])
       object iso extends Isomorphism.IsoFunctorTemplate[AsyncIO, EitherT[Cont[Unit, ?], Throwable, ?]] {
         def to[A](fa: AsyncIO[A]) = fa.eitherTUnitCont
         def from[A](ga: EitherT[Cont[Unit, ?], Throwable, A]): AsyncIO[A] = new AsyncIO(ga)
