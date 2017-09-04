@@ -43,4 +43,31 @@ class Main {
       .blockingAwait()
   }
 
+  @Benchmark
+  def sequenceScalazAsyncIOA(): Long = {
+    import scalaz.syntax.all._
+    import scala.concurrent.ExecutionContext.Implicits._
+    import com.thoughtworks.designpattern.benchmark.scalazasyncio.AsyncIO
+
+    val tasks = (0 until 100).map(_ => AsyncIO.execute(IO(1))).toList
+    val init = AsyncIO.execute(IO(ListBuffer.empty[Int]))
+    tasks
+      .foldLeft(init)((acc, elem: AsyncIO[Int]) => acc.flatMap(lb => elem.map(e => lb += e)))
+      .map(_.toList.sum.toLong)
+      .blockingAwait()
+  }
+
+  @Benchmark
+  def sequenceDesignPatternAsyncIOA(): Long = {
+    import scala.concurrent.ExecutionContext.Implicits._
+    import com.thoughtworks.designpattern.benchmark.designpatternasyncio.AsyncIO
+
+    val tasks = (0 until 100).map(_ => AsyncIO.execute(() => 1)).toList
+    val init = AsyncIO.execute(() => ListBuffer.empty[Int])
+    tasks
+      .foldLeft(init)((acc, elem: AsyncIO[Int]) => acc.flatMap(lb => elem.map(e => lb += e)))
+      .map(_.toList.sum.toLong)
+      .blockingAwait()
+  }
+
 }

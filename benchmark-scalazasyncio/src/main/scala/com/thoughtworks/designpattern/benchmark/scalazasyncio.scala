@@ -23,7 +23,7 @@ object scalazasyncio {
     }
 
     def execute[A](io: IO[A])(implicit executionContext: ExecutionContext): AsyncIO[A] = {
-      val cont = Cont { continue =>
+      val cont = Cont { (continue: Throwable \/ A => Unit) =>
         executionContext.execute { () =>
           continue(io.catchLeft.unsafePerformIO())
         }
