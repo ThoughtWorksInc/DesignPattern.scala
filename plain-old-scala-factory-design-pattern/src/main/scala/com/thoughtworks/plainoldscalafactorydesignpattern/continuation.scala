@@ -12,26 +12,26 @@ object continuation {
 
   trait ContinuationFactory extends MonadFactory with BoxFactory with IOFactory {
     type Result
-    type Unboxed[+A] = (A => Result) => Result
+    type Value[+A] = (A => Result) => Result
 
     type Facade[+A] <: Continuation[A]
 
     trait Continuation[+A] extends Any with Monad[A] with Box[A] {
       override def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = {
-        // Assign unboxed to local in case of this Continuation being captured by closures
-        val unboxed = unbox
+        // Assign value to local in case of this Continuation being captured by closures
+        val value = unbox
         Facade { (continue: B => Result) =>
-          unboxed { a: A =>
+          value { a: A =>
             mapper(a).unbox(continue)
           }
         }
       }
 
       override def map[B](mapper: (A) => B): Facade[B] = {
-        // Assign unboxed to local in case of this Continuation being captured by closures
-        val unboxed = unbox
+        // Assign value to local in case of this Continuation being captured by closures
+        val value = unbox
         Facade { (continue: B => Result) =>
-          unboxed(mapper.andThen(continue))
+          value(mapper.andThen(continue))
         }
       }
     }
@@ -43,7 +43,7 @@ object continuation {
 
   object UnitContinuation extends ContinuationFactory with BoxCompanion {
     type Result = Unit
-    implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with Continuation[A] {
+    implicit final class Facade[+A](val unbox: Value[A]) extends AnyVal with Continuation[A] {
       def blockingAwait: A = {
         val syncVar: SyncVar[A] = new SyncVar
         unbox(syncVar.put)

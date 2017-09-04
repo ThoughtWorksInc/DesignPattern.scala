@@ -14,7 +14,7 @@ object either {
     val underlyingFactory: UnderlyingFactory
 
     type Error
-    type Unboxed[+A] = underlyingFactory.Unboxed[Either[Error, A]]
+    type Value[+A] = underlyingFactory.Value[Either[Error, A]]
   }
 
   trait MonadErrorFactoryDecorator extends MonadErrorFactory with BoxFactoryDecorator {
@@ -74,7 +74,7 @@ object either {
     type Error = Throwable
     type UnderlyingFactory = continuation.UnitContinuation.type
     val underlyingFactory: UnderlyingFactory = UnitContinuation
-    implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with MonadErrorDecorator[A]
+    implicit final class Facade[+A](val unbox: Value[A]) extends AnyVal with MonadErrorDecorator[A]
   }
 
   /** @template */

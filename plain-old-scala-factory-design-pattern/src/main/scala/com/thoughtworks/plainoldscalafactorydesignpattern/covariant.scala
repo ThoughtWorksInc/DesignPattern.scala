@@ -8,20 +8,20 @@ import scala.language.implicitConversions
 object covariant {
   trait BoxFactory {
 
-    type Unboxed[+A]
+    type Value[+A]
 
     trait Box[+A] extends Any {
-      def unbox: Unboxed[A]
+      def unbox: Value[A]
     }
 
     type Facade[+A] <: Box[A]
-    implicit def Facade[A](unboxed: Unboxed[A]): Facade[A]
+    implicit def Facade[A](value: Value[A]): Facade[A]
 
   }
 
   trait BoxCompanion extends BoxFactory {
-    def apply[A](unboxed: Unboxed[A]): Facade[A] = Facade(unboxed)
-    def unapply[A](facade: Facade[A]): Some[Unboxed[A]] = Some(facade.unbox)
+    def apply[A](value: Value[A]): Facade[A] = Facade(value)
+    def unapply[A](facade: Facade[A]): Some[Value[A]] = Some(facade.unbox)
   }
 
   trait IOFactory {
