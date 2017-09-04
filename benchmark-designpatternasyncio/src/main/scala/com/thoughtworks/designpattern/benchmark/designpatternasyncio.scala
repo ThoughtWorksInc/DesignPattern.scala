@@ -16,11 +16,10 @@ object designpatternasyncio {
       def blockingAwait(): A = underlyingFactory.Facade(value).blockingAwait().toTry.get
     }
 
-    def execute[A](io: () => A)(implicit executionContext: ExecutionContext): Facade[A] = Facade {
-      (continue: Either[Throwable, A] => Unit) =>
-        executionContext.execute { () =>
-          continue(Try(io()).toEither)
-        }
+    def execute[A](io: () => A)(implicit executionContext: ExecutionContext): Facade[A] = Facade { continue =>
+      executionContext.execute { () =>
+        continue(Try(io()).toEither)
+      }
     }
   }
 
