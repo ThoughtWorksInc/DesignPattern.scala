@@ -17,9 +17,21 @@ object continuation {
     type Facade[+A] <: Continuation[A]
 
     trait Continuation[+A] extends Any with Monad[A] with Box[A] {
-      override def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = Facade { (continue: B => Result) =>
-        unbox { a: A =>
-          mapper(a).unbox(continue)
+      override def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = {
+        // Assign unboxed to local in case of this Continuation being captured by closures
+        val unboxed = unbox
+        Facade { (continue: B => Result) =>
+          unboxed { a: A =>
+            mapper(a).unbox(continue)
+          }
+        }
+      }
+
+      override def map[B](mapper: (A) => B): Facade[B] = {
+        // Assign unboxed to local in case of this Continuation being captured by closures
+        val unboxed = unbox
+        Facade { (continue: B => Result) =>
+          unboxed(mapper.andThen(continue))
         }
       }
     }

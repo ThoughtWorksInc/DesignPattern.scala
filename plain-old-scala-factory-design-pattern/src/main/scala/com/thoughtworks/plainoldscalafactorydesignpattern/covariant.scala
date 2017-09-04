@@ -1,5 +1,6 @@
 package com.thoughtworks.plainoldscalafactorydesignpattern
 import language.higherKinds
+import scala.language.implicitConversions
 
 /**
   * @author 杨博 (Yang Bo)
@@ -50,8 +51,10 @@ object covariant {
     trait Monad[+A] extends Any with Functor[A] {
 
       def map[B](mapper: (A) => B): Facade[B] = {
-        flatMap { a =>
-          pure(mapper(a))
+        // Assign MonadFactory to local in case of this Monad being captured by closures
+        val monadFactory: MonadFactory.this.type = MonadFactory.this
+        flatMap { a: A =>
+          monadFactory.pure(mapper(a))
         }
       }
 

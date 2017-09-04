@@ -26,6 +26,9 @@ object either {
 
     trait MonadErrorDecorator[+A] extends Any with MonadError[A] with Box[A] {
       def handleError[B >: A](catcher: Error => Facade[B]): Facade[B] = Facade {
+        // Assign underlyingFactory to local in case of this MonadErrorDecorator being captured by closures
+        val underlyingFactory: MonadErrorFactoryDecorator.this.underlyingFactory.type =
+          MonadErrorFactoryDecorator.this.underlyingFactory
         underlyingFactory
           .Facade(unbox)
           .flatMap {
@@ -38,6 +41,9 @@ object either {
       }
 
       def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = Facade {
+        // Assign underlyingFactory to local in case of this MonadErrorDecorator being captured by closures
+        val underlyingFactory: MonadErrorFactoryDecorator.this.underlyingFactory.type =
+          MonadErrorFactoryDecorator.this.underlyingFactory
         underlyingFactory
           .Facade(unbox)
           .flatMap {
