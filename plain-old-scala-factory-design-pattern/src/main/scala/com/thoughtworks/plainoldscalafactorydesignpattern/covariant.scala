@@ -11,7 +11,7 @@ object covariant {
     type Value[+A]
 
     trait Box[+A] extends Any {
-      def unbox: Value[A]
+      def value: Value[A]
     }
 
     type Facade[+A] <: Box[A]
@@ -21,7 +21,7 @@ object covariant {
 
   trait BoxCompanion extends BoxFactory {
     def apply[A](value: Value[A]): Facade[A] = Facade(value)
-    def unapply[A](facade: Facade[A]): Some[Value[A]] = Some(facade.unbox)
+    def unapply[A](facade: Facade[A]): Some[Value[A]] = Some(facade.value)
   }
 
   trait IOFactory {

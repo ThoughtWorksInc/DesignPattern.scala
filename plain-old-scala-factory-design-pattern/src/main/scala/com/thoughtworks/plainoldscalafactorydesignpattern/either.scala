@@ -30,14 +30,14 @@ object either {
         val underlyingFactory: MonadErrorFactoryDecorator.this.underlyingFactory.type =
           MonadErrorFactoryDecorator.this.underlyingFactory
         underlyingFactory
-          .Facade(unbox)
+          .Facade(value)
           .flatMap {
             case Left(e) =>
-              underlyingFactory.Facade(catcher(e).unbox)
+              underlyingFactory.Facade(catcher(e).value)
             case right: Right[Error, B] =>
               underlyingFactory.pure(right)
           }
-          .unbox
+          .value
       }
 
       def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = Facade {
@@ -45,20 +45,20 @@ object either {
         val underlyingFactory: MonadErrorFactoryDecorator.this.underlyingFactory.type =
           MonadErrorFactoryDecorator.this.underlyingFactory
         underlyingFactory
-          .Facade(unbox)
+          .Facade(value)
           .flatMap {
             case Right(a) =>
-              underlyingFactory.Facade(mapper(a).unbox)
+              underlyingFactory.Facade(mapper(a).value)
             case Left(e) =>
               underlyingFactory.pure(Left(e))
           }
-          .unbox
+          .value
       }
     }
 
-    def raiseError[A](e: Error): Facade[A] = Facade(underlyingFactory.pure(Left(e)).unbox)
+    def raiseError[A](e: Error): Facade[A] = Facade(underlyingFactory.pure(Left(e)).value)
 
-    def pure[A](a: A): Facade[A] = Facade(underlyingFactory.pure(Right(a)).unbox)
+    def pure[A](a: A): Facade[A] = Facade(underlyingFactory.pure(Right(a)).value)
 
   }
 
@@ -66,7 +66,7 @@ object either {
 
     type UnderlyingFactory <: IOFactory with BoxFactory
 
-    def liftIO[A](io: () => A): Facade[A] = Facade(underlyingFactory.liftIO(() => Right(io())).unbox)
+    def liftIO[A](io: () => A): Facade[A] = Facade(underlyingFactory.liftIO(() => Right(io())).value)
 
   }
 
@@ -74,7 +74,7 @@ object either {
     type Error = Throwable
     type UnderlyingFactory = continuation.UnitContinuation.type
     val underlyingFactory: UnderlyingFactory = UnitContinuation
-    implicit final class Facade[+A](val unbox: Value[A]) extends AnyVal with MonadErrorDecorator[A]
+    implicit final class Facade[+A](val value: Value[A]) extends AnyVal with MonadErrorDecorator[A]
   }
 
   /** @template */

@@ -19,17 +19,17 @@ object continuation {
     trait Continuation[+A] extends Any with Monad[A] with Box[A] {
       override def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = {
         // Assign value to local in case of this Continuation being captured by closures
-        val value = unbox
+        val value = this.value
         Facade { (continue: B => Result) =>
           value { a: A =>
-            mapper(a).unbox(continue)
+            mapper(a).value(continue)
           }
         }
       }
 
       override def map[B](mapper: (A) => B): Facade[B] = {
         // Assign value to local in case of this Continuation being captured by closures
-        val value = unbox
+        val value = this.value
         Facade { (continue: B => Result) =>
           value(mapper.andThen(continue))
         }
@@ -43,10 +43,10 @@ object continuation {
 
   object UnitContinuation extends ContinuationFactory with BoxCompanion {
     type Result = Unit
-    implicit final class Facade[+A](val unbox: Value[A]) extends AnyVal with Continuation[A] {
+    implicit final class Facade[+A](val value: Value[A]) extends AnyVal with Continuation[A] {
       def blockingAwait: A = {
         val syncVar: SyncVar[A] = new SyncVar
-        unbox(syncVar.put)
+        value(syncVar.put)
         syncVar.take
       }
     }
