@@ -8,7 +8,7 @@ However, the implicit parameter approach has some weaknesses in comparison to Ha
 
 1. Slow compilation
 2. Large byte code generation
-3. Bad performance due to frequent type class instance allocation
+3. Bad performance
 4. Huge number of lines of boilerplate code
 5. Messing up of API documentation
 6. Obscure type checking error message
