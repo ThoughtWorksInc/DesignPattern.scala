@@ -3,6 +3,7 @@ import com.thoughtworks.plainoldscalafactorydesignpattern.covariant._
 
 import language.higherKinds
 import language.implicitConversions
+import scala.concurrent.SyncVar
 
 /**
   * @author 杨博 (Yang Bo)
@@ -30,7 +31,13 @@ object continuation {
 
   object UnitContinuation extends ContinuationFactory with BoxCompanion {
     type Result = Unit
-    implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with Continuation[A]
+    implicit final class Facade[+A](val unbox: Unboxed[A]) extends AnyVal with Continuation[A] {
+      def blockingAwait: A = {
+        val syncVar: SyncVar[A] = new SyncVar
+        unbox(syncVar.put)
+        syncVar.take
+      }
+    }
   }
 
   /** @template */
