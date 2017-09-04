@@ -44,11 +44,42 @@ object covariant {
 
   }
 
-  trait MonadFactory extends FunctorFactory {
+  trait FlatMapFactory extends FunctorFactory {
 
-    type Facade[+A] <: Monad[A]
+    type Facade[+A] <: FlatMap[A]
 
-    trait Monad[+A] extends Any with Functor[A] {
+    trait FlatMap[+A] extends Any with Functor[A] {
+
+      def flatMap[B](mapper: A => Facade[B]): Facade[B]
+
+      def flatten[B](implicit asNested: Facade[A] <:< Facade[Facade[B]]): Facade[B]
+
+    }
+
+    trait FlatMapIsPrimary[+A] extends Any with FlatMap[A] {
+      protected def isFlatMapDerived = false
+    }
+
+    trait FlatMapIsDerived[+A] extends Any with FlatMap[A] {
+
+      def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = {
+        map(mapper).flatten
+      }
+
+      protected def isFlatMapDerived = true
+    }
+
+  }
+
+  trait ApplicativeFactory extends FunctorFactory {
+    def pure[A](a: A): Facade[A]
+  }
+
+  trait MonadFactory extends FlatMapFactory with ApplicativeFactory {
+
+    type Monad[+A] = FlatMap[A]
+
+    trait MapIsDerived[+A] extends Any with FlatMapIsPrimary[A] {
 
       def map[B](mapper: (A) => B): Facade[B] = {
         // Assign MonadFactory to local in case of this Monad being captured by closures
@@ -58,7 +89,13 @@ object covariant {
         }
       }
 
-      def flatMap[B](mapper: A => Facade[B]): Facade[B]
+    }
+
+    trait FlattenIsDerived[+A] extends Any with FlatMapIsPrimary[A] { this: Facade[A] =>
+
+      def flatten[B](implicit asNested: Facade[A] <:< Facade[Facade[B]]): Facade[B] = {
+        asNested(this).flatMap(identity)
+      }
 
     }
 

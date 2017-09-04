@@ -16,7 +16,7 @@ object continuation {
 
     type Facade[+A] <: Continuation[A]
 
-    trait Continuation[+A] extends Any with Monad[A] with Box[A] {
+    trait Continuation[+A] extends Any with FlattenIsDerived[A] with Box[A] { this: Facade[A] =>
       override def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = {
         // Assign value to local in case of this Continuation being captured by closures
         val value = this.value

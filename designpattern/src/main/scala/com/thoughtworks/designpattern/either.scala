@@ -26,7 +26,13 @@ object either {
 
     type Facade[+A] <: MonadErrorDecorator[A]
 
-    trait MonadErrorDecorator[+A] extends Any with MonadError[A] with Box[A] {
+    trait MonadErrorDecorator[+A] extends Any with MonadError[A] with Box[A] with FlattenIsDerived[A] {
+      this: Facade[A] =>
+
+      def map[B](mapper: (A) => B): Facade[B] = {
+        underlyingFactory.Facade(value).map(_.map(mapper)).value
+      }
+
       def handleError[B >: A](catcher: Error => Facade[B]): Facade[B] = Facade {
         // Assign underlyingFactory to local in case of this MonadErrorDecorator being captured by closures
         val underlyingFactory: EitherMonadErrorFactoryDecorator.this.underlyingFactory.type =
