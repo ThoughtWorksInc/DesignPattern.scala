@@ -11,6 +11,7 @@ However, the implicit parameter approach has some weaknesses in comparison to Ha
 3. Bad performance due to frequent type class instance allocation
 4. Huge number of lines of boilerplate code
 5. Obscure API documentation
+6. Broken Java interoperability
 
 We discovered a new object-oriented type class representation that resolves all the above issues. Our type classes are abstract factories, described in the book *Design Patterns*. Our factories are composable, thus different types of monad transformers can be modeled as different compositions of factory objects.
 
