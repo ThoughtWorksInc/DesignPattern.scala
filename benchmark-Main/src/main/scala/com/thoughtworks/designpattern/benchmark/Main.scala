@@ -1,16 +1,10 @@
-package com.thoughtworks.designpattern
+package com.thoughtworks.designpattern.benchmark
 
-import language.implicitConversions
-import language.higherKinds
-import com.thoughtworks.designpattern.continuation.UnitContinuation
-import com.thoughtworks.designpattern.covariant.BoxCompanion
-import com.thoughtworks.designpattern.either.{IOFactoryDecorator, MonadErrorFactoryDecorator}
 import org.openjdk.jmh.annotations._
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.SyncVar
-import scalaz.{Cont, EitherT, IndexedContsT, \/-}
-import scalaz.effect.{IO, LiftIO}
+import scala.language.{higherKinds, implicitConversions}
+import scalaz.effect.IO
 
 /**
   * @author 杨博 (Yang Bo)
@@ -20,8 +14,9 @@ class Main {
 
   @Benchmark
   def sequenceScalazAsyncIOS(): Long = {
-    import scalaz.syntax.all._
     import com.thoughtworks.designpattern.benchmark.scalazasyncio.AsyncIO
+
+    import scalaz.syntax.all._
 
     val tasks = (0 until 100).map(_ => IO(1).liftIO[AsyncIO]).toList
     val init = IO(ListBuffer.empty[Int]).liftIO[AsyncIO]
@@ -45,9 +40,10 @@ class Main {
 
   @Benchmark
   def sequenceScalazAsyncIOA(): Long = {
-    import scalaz.syntax.all._
-    import scala.concurrent.ExecutionContext.Implicits._
     import com.thoughtworks.designpattern.benchmark.scalazasyncio.AsyncIO
+
+    import scala.concurrent.ExecutionContext.Implicits._
+    import scalaz.syntax.all._
 
     val tasks = (0 until 100).map(_ => AsyncIO.execute(IO(1))).toList
     val init = AsyncIO.execute(IO(ListBuffer.empty[Int]))
@@ -59,8 +55,9 @@ class Main {
 
   @Benchmark
   def sequenceDesignPatternAsyncIOA(): Long = {
-    import scala.concurrent.ExecutionContext.Implicits._
     import com.thoughtworks.designpattern.benchmark.designpatternasyncio.AsyncIO
+
+    import scala.concurrent.ExecutionContext.Implicits._
 
     val tasks = (0 until 100).map(_ => AsyncIO.execute(() => 1)).toList
     val init = AsyncIO.execute(() => ListBuffer.empty[Int])

@@ -1,7 +1,6 @@
 package com.thoughtworks.designpattern.benchmark
 
 import scala.concurrent.{ExecutionContext, SyncVar}
-import scala.util.Try
 import scalaz._
 import scalaz.effect._
 
