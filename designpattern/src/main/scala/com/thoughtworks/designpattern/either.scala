@@ -29,7 +29,7 @@ object either {
     trait MonadErrorDecorator[+A] extends Any with MonadError[A] with Box[A] with FlattenIsDerived[A] {
       this: Facade[A] =>
 
-      def map[B](mapper: (A) => B): Facade[B] = {
+      def map[B](mapper: A => B): Facade[B] = {
         underlyingFactory.Facade(value).map(_.map(mapper)).value
       }
 
@@ -48,7 +48,7 @@ object either {
           .value
       }
 
-      def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = Facade {
+      def flatMap[B](mapper: A => Facade[B]): Facade[B] = Facade {
         // Assign underlyingFactory to local in case of this MonadErrorDecorator being captured by closures
         val underlyingFactory: EitherMonadErrorFactoryDecorator.this.underlyingFactory.type =
           EitherMonadErrorFactoryDecorator.this.underlyingFactory
