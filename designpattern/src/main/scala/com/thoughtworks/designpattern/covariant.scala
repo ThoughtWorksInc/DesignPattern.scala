@@ -69,6 +69,14 @@ object covariant {
       protected def isFlatMapDerived = true
     }
 
+    trait FlattenIsDerived[+A] extends Any with FlatMapIsPrimary[A] { this: Facade[A] =>
+
+      def flatten[B](implicit asNested: Facade[A] <:< Facade[Facade[B]]): Facade[B] = {
+        asNested(this).flatMap(identity)
+      }
+
+    }
+
   }
 
   trait ApplicativeFactory extends FunctorFactory {
@@ -90,17 +98,6 @@ object covariant {
       }
 
     }
-
-    trait FlattenIsDerived[+A] extends Any with FlatMapIsPrimary[A] { this: Facade[A] =>
-
-      def flatten[B](implicit asNested: Facade[A] <:< Facade[Facade[B]]): Facade[B] = {
-        asNested(this).flatMap(identity)
-      }
-
-    }
-
-    def pure[A](a: A): Facade[A]
-
   }
 
   trait MonadErrorFactory extends MonadFactory {
