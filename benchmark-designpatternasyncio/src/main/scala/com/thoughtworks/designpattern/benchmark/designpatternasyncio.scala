@@ -9,7 +9,7 @@ import scala.util.Try
 
 object designpatternasyncio {
 
-  object AsyncIO extends MonadErrorFactoryDecorator with IOFactoryDecorator with BoxCompanion {
+  object AsyncIO extends EitherMonadErrorFactoryDecorator with EitherIOFactoryDecorator with BoxCompanion {
     type UnderlyingFactory = UnitContinuation.type
     val underlyingFactory: UnderlyingFactory = UnitContinuation
     implicit final class Facade[+A](val value: Value[A]) extends AnyVal with MonadErrorDecorator[A] {

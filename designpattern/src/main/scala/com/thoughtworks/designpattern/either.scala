@@ -10,7 +10,7 @@ import scala.util.Try
   */
 object either {
 
-  trait BoxFactoryDecorator extends BoxFactory {
+  trait EitherBoxFactoryDecorator extends BoxFactory {
     type UnderlyingFactory <: BoxFactory
     val underlyingFactory: UnderlyingFactory
 
@@ -18,7 +18,7 @@ object either {
     type Value[+A] = underlyingFactory.Value[Either[LeftHandSide, A]]
   }
 
-  trait MonadErrorFactoryDecorator extends MonadErrorFactory with BoxFactoryDecorator {
+  trait EitherMonadErrorFactoryDecorator extends MonadErrorFactory with EitherBoxFactoryDecorator {
     type UnderlyingFactory <: MonadFactory with BoxFactory {
       type Facade[+A] <: Monad[A] with Box[A]
     }
@@ -30,8 +30,8 @@ object either {
     trait MonadErrorDecorator[+A] extends Any with MonadError[A] with Box[A] {
       def handleError[B >: A](catcher: Error => Facade[B]): Facade[B] = Facade {
         // Assign underlyingFactory to local in case of this MonadErrorDecorator being captured by closures
-        val underlyingFactory: MonadErrorFactoryDecorator.this.underlyingFactory.type =
-          MonadErrorFactoryDecorator.this.underlyingFactory
+        val underlyingFactory: EitherMonadErrorFactoryDecorator.this.underlyingFactory.type =
+          EitherMonadErrorFactoryDecorator.this.underlyingFactory
         underlyingFactory
           .Facade(value)
           .flatMap {
@@ -45,8 +45,8 @@ object either {
 
       def flatMap[B](mapper: (A) => Facade[B]): Facade[B] = Facade {
         // Assign underlyingFactory to local in case of this MonadErrorDecorator being captured by closures
-        val underlyingFactory: MonadErrorFactoryDecorator.this.underlyingFactory.type =
-          MonadErrorFactoryDecorator.this.underlyingFactory
+        val underlyingFactory: EitherMonadErrorFactoryDecorator.this.underlyingFactory.type =
+          EitherMonadErrorFactoryDecorator.this.underlyingFactory
         underlyingFactory
           .Facade(value)
           .flatMap {
@@ -65,7 +65,7 @@ object either {
 
   }
 
-  trait IOFactoryDecorator extends IOFactory with BoxFactoryDecorator {
+  trait EitherIOFactoryDecorator extends IOFactory with EitherBoxFactoryDecorator {
 
     type UnderlyingFactory <: IOFactory with BoxFactory
 
