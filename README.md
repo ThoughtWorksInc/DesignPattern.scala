@@ -14,7 +14,7 @@ However, the implicit parameter approach has some weaknesses in comparison to Ha
 6. Obscure type checking error message
 7. Broken Java interoperability
 
-We discovered a new object-oriented type class representation that resolves all the above issues. Our type classes are abstract factories, described in the book *Design Patterns*. Our factories are composable, thus different types of monad transformers can be modeled as different compositions of factory objects.
+We discovered a new object-oriented type class representation that resolves all the above issues. Our type classes are abstract factories, described in the book *Design Patterns*. Our factories are composable, thus different types of monad transformers can be modeled as different [compositions of factory objects](https://github.com/ThoughtWorksInc/DesignPattern.scala/blob/c8a1c69/benchmark-asyncio-designpattern/src/main/scala/com/thoughtworks/designpattern/benchmark/asyncio/designpattern.scala#L12).
 
 We have implemented some examples of factory pattern monad type classes in both Java and Scala. The capability of both versions are no less than Haskell's type class, though the Java version is not 100% type safe due to lack of the feature of higher kinded type parameter. Fortunately the type safety problem merely affects the users of type classes. There is only one type casting in [our use case](https://github.com/ThoughtWorksInc/DesignPattern.scala/blob/master/lite/src/test/java/com/thoughtworks/designpattern/lite/TaskTest.java), which contains more than one hundrend lines of code.
 
