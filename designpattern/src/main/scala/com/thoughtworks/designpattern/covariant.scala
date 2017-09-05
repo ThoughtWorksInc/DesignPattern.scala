@@ -57,6 +57,7 @@ object covariant {
     }
 
     trait FlatMapIsPrimary[+A] extends Any with FlatMap[A] {
+      /** An internal method that intends to make this [[FlatMapIsPrimary]] conflict with [[FlatMapIsDerived]]. */
       protected def isFlatMapDerived = false
     }
 
@@ -66,6 +67,7 @@ object covariant {
         map(mapper).flatten
       }
 
+      /** An internal method that intends to make this [[FlatMapIsDerived]] conflict with [[FlatMapIsPrimary]]. */
       protected def isFlatMapDerived = true
     }
 
