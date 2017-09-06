@@ -21,3 +21,5 @@ lazy val unidoc = project
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"),
     scalacOptions += "-Xexperimental"
   )
+
+aggregateProjects(`benchmark-Main`, `benchmark-asyncio-scalaz`, `benchmark-asyncio-designpattern`, designpattern, lite)

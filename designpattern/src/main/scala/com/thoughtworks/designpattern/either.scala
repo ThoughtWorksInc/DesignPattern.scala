@@ -3,6 +3,7 @@ import com.thoughtworks.designpattern.covariant._
 
 import language.higherKinds
 import scala.util.Try
+import scala.util.control.NonFatal
 
 /**
   * @author 杨博 (Yang Bo)
@@ -30,7 +31,7 @@ object either {
       this: Facade[A] =>
 
       def map[B](mapper: A => B): Facade[B] = {
-        underlyingFactory.Facade(value).map(_.map(mapper)).value
+        underlyingFactory.Facade(value).map(_.right.map(mapper)).value
       }
 
       def handleError[B >: A](catcher: Error => Facade[B]): Facade[B] = Facade {
@@ -76,8 +77,17 @@ object either {
 
     type LeftHandSide = Throwable
 
-    def liftIO[A](io: () => A): Facade[A] = Facade(underlyingFactory.liftIO(() => Try(io()).toEither).value)
-
+    def liftIO[A](io: () => A): Facade[A] = Facade {
+      underlyingFactory
+        .liftIO[Either[Throwable, A]] { () =>
+          try {
+            Right(io())
+          } catch {
+            case NonFatal(e) => Left(e)
+          }
+        }
+        .value
+    }
   }
 
 }
